@@ -18,44 +18,44 @@ const curlTemplates: CurlTemplate[] = [
   {
     name: "Register (Hardened)",
     command:
-      'curl -X POST http://localhost:3000/api/hardened/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"SecurePass123!@#"}\'',
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/hardened/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"SecurePass123!@#"}\'',
   },
   {
     name: "Register (Baseline)",
     command:
-      'curl -X POST http://localhost:3000/api/baseline/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"weak"}\'',
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"weak"}\'',
   },
   {
     name: "Login (Hardened)",
     command:
-      'curl -X POST http://localhost:3000/api/hardened/auth -H "Content-Type: application/json" -d \'{"action":"login","email":"user@example.com","password":"SecurePass123!@#"}\'',
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/hardened/auth -H "Content-Type: application/json" -d \'{"action":"login","email":"user@example.com","password":"SecurePass123!@#"}\'',
   },
   {
     name: "Login (Baseline)",
     command:
-      'curl -X POST http://localhost:3000/api/baseline/auth -H "Content-Type: application/json" -d \'{"action":"login","email":"user@example.com","password":"weak"}\'',
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/auth -H "Content-Type: application/json" -d \'{"action":"login","email":"user@example.com","password":"weak"}\'',
   },
   {
     name: "Get Tasks (Hardened)",
     command:
-      'curl -X GET http://localhost:3000/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"',
+      'curl -X GET https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"',
   },
   {
     name: "Create Task (Hardened)",
     command:
-      'curl -X POST http://localhost:3000/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" -H "Content-Type: application/json" -d \'{"title":"Security Audit","description":"Perform assessment","priority":"HIGH"}\'',
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" -H "Content-Type: application/json" -d \'{"title":"Security Audit","description":"Perform assessment","priority":"HIGH"}\'',
   },
   {
     name: "SQL Injection Test (Baseline)",
     command:
-      'curl -X POST http://localhost:3000/api/baseline/auth \
+      'curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/auth \
       -H "Content-Type: application/json" \
       -d \'{"action":"login","email":"admin@example.com\' OR \'1\'=\'1","password":"anything"}\'',
   },
   {
     name: "IDOR Test (Baseline)",
     command:
-      'curl -X GET "http://localhost:3000/api/baseline/tasks?user_id=other_user_id" -H "Authorization: Bearer session=session_12345_1678901234"',
+      'curl -X GET "https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/tasks?user_id=other_user_id" -H "Authorization: Bearer session=session_12345_1678901234"',
   },
 ];
 
@@ -224,7 +224,7 @@ export default function HackerTerminal() {
       addLine("info", "Register User (Hardened):");
       addLine(
         "output",
-        "curl -X POST http://localhost:3000/api/hardened/auth \\",
+        "curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/hardened/auth \\",
       );
       addLine("output", '  -H "Content-Type: application/json" \\');
       addLine(
@@ -235,7 +235,7 @@ export default function HackerTerminal() {
       addLine("info", "Login (Baseline - Vulnerable):");
       addLine(
         "output",
-        "curl -X POST http://localhost:3000/api/baseline/auth \\",
+        "curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/auth \\",
       );
       addLine("output", '  -H "Content-Type: application/json" \\');
       addLine(
@@ -246,7 +246,7 @@ export default function HackerTerminal() {
       addLine("info", "SQL Injection Test:");
       addLine(
         "output",
-        "curl -X POST http://localhost:3000/api/baseline/auth \\",
+        "curl -X POST https://ai-code-security-gdxglulhh-ebenezerobilojosiahs-projects.vercel.app/api/baseline/auth \\",
       );
       addLine("output", '  -H "Content-Type: application/json" \\');
       addLine(
