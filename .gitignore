@@ -11,4 +11,5 @@ __v0_jsx-dev-runtime.ts
 .env
 
 # dependencies
-/node_modules
+/git
+node_modules
