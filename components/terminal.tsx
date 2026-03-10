@@ -21,7 +21,7 @@ const curlTemplates: CurlTemplate[] = [
       'curl -X POST https://ai-code-security-one.vercel.app/api/hardened/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"SecurePass123!@#"}\'',
   },
   {
-    name: "Register (Baseline)",
+    name: "Register (Baseline)-Storing password hash in response",
     command:
       'curl -X POST https://ai-code-security-one.vercel.app/api/baseline/auth -H "Content-Type: application/json" -d \'{"action":"register","email":"user@example.com","password":"weak"}\'',
   },
@@ -41,21 +41,40 @@ const curlTemplates: CurlTemplate[] = [
       'curl -X GET https://ai-code-security-one.vercel.app/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"',
   },
   {
+    name: "Get Tasks (Baseline)-no user isolation",
+    command:
+      'curl -X GET "https://ai-code-security-one.vercel.app/api/baseline/tasks?user_id=other_user_id" -H "Authorization: Bearer session=session_12345_1678901234"',
+  },
+  {
     name: "Create Task (Hardened)",
     command:
       'curl -X POST https://ai-code-security-one.vercel.app/api/hardened/tasks -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" -H "Content-Type: application/json" -d \'{"title":"Security Audit","description":"Perform assessment","priority":"HIGH"}\'',
   },
   {
-    name: "SQL Injection Test (Baseline)",
+    name: "Create Task (Baseline)-no input validation",
     command:
-      'curl -X POST https://ai-code-security-one.vercel.app/api/baseline/auth \
-      -H "Content-Type: application/json" \
-      -d \'{"action":"login","email":"admin@example.com\' OR \'1\'=\'1","password":"anything"}\'',
+      'curl -X POST https://ai-code-security-one.vercel.app/api/baseline/tasks -H "Authorization: Bearer session=session_12345_1678901234" -H "Content-Type: application/json" -d \'{"title":"Baseline Task","description":"No validation here","priority":"HIGH","user_id":"USER_ID_HERE"}\'',
   },
   {
-    name: "IDOR Test (Baseline)",
+    name: "Update Task (Hardened)",
     command:
-      'curl -X GET "https://ai-code-security-one.vercel.app/api/baseline/tasks?user_id=other_user_id" -H "Authorization: Bearer session=session_12345_1678901234"',
+      'curl -X PUT "https://ai-code-security-one.vercel.app/api/hardened/tasks?id=TASK_ID_HERE" -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE" -H "Content-Type: application/json" -d \'{"title":"Updated Security Audit","description":"Updated description","priority":"HIGH","status":"IN_PROGRESS"}\'',
+  },
+  {
+    name: "Update Task (Baseline)-allows updating any task",
+    command:
+      'curl -X PUT "https://ai-code-security-one.vercel.app/api/baseline/tasks?id=TASK_ID_HERE" -H "Authorization: Bearer session=session_12345_1678901234" -H "Content-Type: application/json" -d \'{"title":"Updated Baseline Task","description":"IDOR update attempt","priority":"CRITICAL","status":"COMPLETED"}\'',
+  },
+  {
+    name: "Delete Task (Hardened)",
+    command:
+      'curl -X DELETE "https://ai-code-security-one.vercel.app/api/hardened/tasks?id=TASK_ID_HERE" -H "Authorization: Bearer YOUR_JWT_TOKEN_HERE"',
+  },
+
+  {
+    name: "Delete Task (Baseline)-no ownership verification",
+    command:
+      'curl -X DELETE "https://ai-code-security-one.vercel.app/api/baseline/tasks?id=TASK_ID_HERE" -H "Authorization: Bearer session=session_12345_1678901234"',
   },
 ];
 
@@ -82,7 +101,7 @@ export default function HackerTerminal() {
   const [input, setInput] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -277,8 +296,7 @@ export default function HackerTerminal() {
       addLine("info", 'Type "help" for available commands');
     }
   };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !isExecuting) {
       executeCommand(input);
       setInput("");
@@ -382,17 +400,21 @@ export default function HackerTerminal() {
       {/* Input Area */}
       <div className="bg-slate-900/50 border border-cyan-500/20 rounded-lg p-3">
         <div className="flex gap-2">
-          <div className="flex-1 flex items-center bg-black/50 border border-cyan-500/30 rounded px-3 py-2">
+          <div className="flex-1 flex items-start bg-black/50 border border-cyan-500/30 rounded px-3 py-3 h-24">
             <span className="text-cyan-400 mr-2 font-mono text-sm">$</span>
-            <input
+
+            <textarea
               ref={inputRef}
-              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter curl command or shell command..."
+              spellCheck={false}
+              autoCorrect="off"
+              autoCapitalize="off"
               disabled={isExecuting}
-              className="flex-1 bg-transparent outline-none text-cyan-300 font-mono text-sm placeholder-slate-600 disabled:opacity-50"
+              rows={3}
+              className="flex-1 bg-transparent outline-none text-cyan-300 font-mono text-sm placeholder-slate-600 disabled:opacity-50 resize-none"
               style={{ textShadow: "0 0 8px rgba(34, 211, 238, 0.3)" }}
             />
           </div>

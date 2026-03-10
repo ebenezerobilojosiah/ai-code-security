@@ -150,6 +150,7 @@ async function handleRegister(
           email: user.email,
           created_at: user.created_at,
         },
+        token: sessionToken,
       },
       { status: 201 },
     );
@@ -283,6 +284,7 @@ async function handleLogin(
           id: user.id,
           email: user.email,
         },
+        token: sessionToken,
       },
       { status: 200 },
     );
